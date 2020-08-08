@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>LISTA DE CATEGORIAS</h2>
+
+
+<div class="row">
+
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">CATEGORIAS</h3>
+            </div>
+            <div class="card-body">
+
+                <a href="~/Categoria/RegistrarCategoria" class="btn btn-sm btn-primary mb-2">Registrar Categoria</a>
+                <a href="~/Aviso/AvisoPorCategoria" class="btn btn-sm btn-primary mb-2">Aviso por Categoria</a>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nº</th>
+                            <th>CATEGORIA</th>
+                            <th>DESCRIPCION</th>
+                            <th>CANTIDAD AVISOS</th>
+                            <th>ESTADO</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.listarCategoria)
+                        {
+                            <tr>
+                                <td>@item.categoria_id</td>
+                                <td>@item.nombre</td>
+                                <td>@item.descripcion</td>
+                                <td>@item.cantidadAvisos</td>
+                                <td>
+                                    <select class="form-control estadoCategoria" data-id="@item.categoria_id">
+                                        <option value="1" @(item.estado == 1   ? "selected" : "") >ACTIVO</option>
+                                        <option value="0"@(item.estado == 0   ? "selected" : "")>INACTIVO</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <a href="~/Categoria/EditarCategoria?categoria_id=@item.categoria_id" class="btn btn-sm btn-success">Editar</a>
+                                    <a href="~/Categoria/VerCategoria?categoria_id=@item.categoria_id" class="btn btn-sm btn-warning">Ver</a>
+                                    <a href="~/Categoria/EliminarCategoria?categoria_id=@item.categoria_id" class="btn btn-sm btn-danger">Eliminar</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+@section js{
+
+    <script>
+        $(document).ready(function () {
+
+            $(document).on('change', '.estadoCategoria', function () {
+                let categoria_id = $(this).data('id');
+                let estado = $(this).find('option:selected').val();
+                $.ajax({
+                    type: 'POST',
+                    url: "/Categoria/ActualizarEstadoCategoria",
+                    data: {
+                        categoria_id: categoria_id,
+                        estado: estado
+                    },
+                    success: function (response) {
+                        if (response.respuesta) {
+                            alert('Se ha actualizado satisfactoriamente');
+                        }
+                    }
+                })
+            });
+        });
+
+    </script>
+
+}
